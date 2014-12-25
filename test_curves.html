@@ -33,18 +33,21 @@
 		ctx.lineTo(0, h2);
 		ctx.stroke();
 
+		
+
 		ctx.lineWidth = 2;
-		ctx.strokeStyle = 'blue';
-		ctx.beginPath();
-		ctx.moveTo(0, 0);
-		for (var x = 0; x <= w2; x++) {
-			var t = x / w2;
-			var k = Tween.QuadraticIn(t);
-			ctx.lineTo(x, k * h2);
-		}
-		ctx.stroke();
+		// ctx.strokeStyle = 'blue';
+		// ctx.beginPath();
+		// ctx.moveTo(0, 0);
+		
+		// for (var x = 0; x <= w2; x++) {
+		// 	var t = x / w2;
+		// 	var k = Tween.QuadraticIn(t);
+		// 	ctx.lineTo(x, k * h2);
+		// }
+		// ctx.stroke();
 
-
+		ctx.globalAlpha = 0.5;
 		ctx.strokeStyle = 'red';
 		ctx.beginPath();
 		ctx.moveTo(0, 0);
@@ -56,8 +59,35 @@
 		ctx.bezierCurveTo(params[0] * w2, params[1] * h2, params[2] * w2, params[3] * h2, w2, h2);
 		ctx.stroke();
 
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = 'green';
+		ctx.beginPath();
+		ctx.moveTo(0, 0);
+		
+		for (var x = 0; x <= w2; x++) {
+			var x2 = x / w2;
+
+			var rx = cubicBezier(x2, 0, params[0], params[2], 1);
+			var ry = cubicBezier(x2, 0, params[1], params[3], 1);
+			
+			ctx.lineTo(rx * w2, ry * h2);
+			// console.log(rx, ry);
+		}
+		ctx.stroke();
 
 
+
+	}
+
+	function cubicBezier(t, p0, p1, p2, p3) {
+		var t2 = 1 - t;
+		var cx0 = t2 * t2 * t2;
+		var cx1 = 3 * t2 * t2 * t;
+		var cx2 = 3 * t2 * t * t;
+		var cx3 = t * t * t;
+
+
+		return cx0 * p0 + cx1 * p1 + cx2 * p2 + cx3 * p3;
 	}
 
 
