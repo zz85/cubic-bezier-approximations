@@ -45,7 +45,7 @@ var KKEasing = {
 
 // Values http://matthewlein.com/ceaser/
 // Based on https://github.com/jhardy/compass-ceaser-easing/blob/master/stylesheets/ceaser-easing/_ease-types.sass
-var matthewlein = {
+var CeaserEasing = {
 	Linear: [0.250, 0.250, 0.750, 0.750],
 	// ease: [0.250, 0.100, 0.250, 1.000],
 	// ease-in: [0.420, 0.000, 1.000, 1.000],
