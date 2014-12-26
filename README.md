@@ -1,6 +1,8 @@
 # Cubic Bezier Approximations for Robert Penner Easing Equations
 
-A "better" set of Cubic Bezier approximations for Robert Penner Easing Equations using bruteforce. Please excuse the rawness of this project. The idea was [conceived and hacked out on Christmas night](https://gist.github.com/zz85/2a0e4a0b944ec89aa5eb). Merry Christmas! 
+A "better" set of Cubic Bezier approximations for Robert Penner Easing Equations using bruteforce. Please excuse the rawness of this project. The idea was [conceived and hacked out on Christmas night](https://gist.github.com/zz85/2a0e4a0b944ec89aa5eb). Merry Christmas!
+
+### [Read more](http://www.lab4games.net/zz85/blog/2014/12/26/better-cubic-bezier-approximations-for-robert-penner-easing-equations/)
 
 ## Demo
 [here](https://zz85.github.io/cubic-bezier-approximations/test_curves.html)
