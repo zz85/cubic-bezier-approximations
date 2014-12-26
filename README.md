@@ -1,5 +1,11 @@
-"Better" / Bruteforce Cubic Bezier Approximations for Robert Penner Easing Equations
+# Cubic Bezier Approximations for Robert Penner Easing Equations
 
+A "better" set of Cubic Bezier approximations for Robert Penner Easing Equations using bruteforce. Please excuse the rawness of this project. The idea was [conceived and hacked out on Christmas night](https://gist.github.com/zz85/2a0e4a0b944ec89aa5eb). Merry Christmas! 
+
+## Demo
+[here](https://zz85.github.io/cubic-bezier-approximations/test_curves.html)
+
+## Usage
 ```sh
 node compare_curve.js
 ```

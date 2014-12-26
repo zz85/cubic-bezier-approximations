@@ -1,5 +1,12 @@
 <html>
 <body>
+	<div style="position: fixed; top: 10px; left: 100px;">
+	<h2>
+	Cubic Bezier Approximations for Robert Penner Easing Equations</h2>
+	<div style="float: right;">
+		experiment by <a href="https://twitter.com/blurspline">@blurspline</a>
+	</div>
+	</div>
 	<script src="easing.js"></script>
 	<script>
 	var w = 1000;
@@ -15,11 +22,11 @@
 	document.body.appendChild(canvas);
 
 	var select = document.createElement('select');
-	select.style.cssText = 'position: fixed; top: 5px; left: 5px;';
+	select.style.cssText = 'position: fixed; top: 75px; left: 15px;';
 	document.body.appendChild(select);
 
 	var select2 = document.createElement('select');
-	select2.style.cssText = 'position: fixed; top: 25px; left: 5px;';
+	select2.style.cssText = 'position: fixed; top: 95px; left: 15px;';
 	document.body.appendChild(select2);
 
 	select2.add(new Option('BSEasing'));
