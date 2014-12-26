@@ -6,7 +6,7 @@ var Names = eases.Names;
 
 var x1, y1, x2, y2;
 
-var units = 25; // 10
+var units = 50; // 10
 var compares = 0;
 
 var duration = 20000;
@@ -16,6 +16,7 @@ epsilon = 1e-5;
 var i;
 
 var easeTypes = [];
+console.log('Bruteforcing parameters... Using ' + units + ' units' );
 console.time('compute');
 
 for (var name in Names) {
@@ -58,6 +59,19 @@ Type.prototype.compare = function(data, x1, y1, x2, y2) {
 
 var solved = new Array(units);
 
+// Unclipped version
+for (x1=0; x1<units; x1++) {
+	for (y1=-units; y1<=units * 2; y1++) {
+		for (x2=units; x2>=0; x2--) {
+			for (y2=units * 2; y2>=-units; y2--) {
+				compare(x1 / units, y1 / units, x2 / units, y2 / units);
+			}
+		}
+	}
+}
+
+/*
+// Clipped version (values between 0..1)
 for (x1=0; x1<units; x1++) {
 	for (y1=0; y1<=units; y1++) {
 		for (x2=units; x2>=0; x2--) {
@@ -67,6 +81,8 @@ for (x1=0; x1<units; x1++) {
 		}
 	}
 }
+*/
+
 
 function compare(x1, y1, x2, y2) {
 	var bezier = new UnitBezier(x1, y1, x2, y2);
@@ -94,7 +110,7 @@ function compare(x1, y1, x2, y2) {
 function printResults() {
 	for (i=0, il = easeTypes.length; i<il;i++) {
 		var e = easeTypes[i];
-		console.log(e.name + ':', e.bestFit, ',');
+		console.log(e.name + ':', e.bestFit, ', // ' + e.leastSquares);
 	}
 }
 

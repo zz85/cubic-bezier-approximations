@@ -14,44 +14,69 @@
 
 	document.body.appendChild(canvas);
 
+	var select = document.createElement('select');
+	select.style.cssText = 'position: fixed; top: 5px; left: 5px;';
+	document.body.appendChild(select);
+
+	var select2 = document.createElement('select');
+	select2.style.cssText = 'position: fixed; top: 25px; left: 5px;';
+	document.body.appendChild(select2);
+
+	select2.add(new Option('BSEasing'));
+	select2.add(new Option('CeaserEasing'));
+	select2.add(new Option('KKEasing'));
+
+
+	function addOption(type, n) {
+		var option = new Option();
+		option.textContent = type + n;
+		option.value = type + n + '|' + Names[type] + n;
+
+		select.appendChild(option);
+	}
+	for (var name in Names) {
+		addOption(name, 'In');
+		addOption(name, 'Out');
+		addOption(name, 'InOut');
+	}
+
+	select.onchange = change;
+	select2.onchange = change;
+
+	function change() {
+		Approx = window[select2.value];
+		var v = select.value.split('|');
+		tweenType = Tween[v[1]];
+		params = Approx[v[0]];
+	}
+
+
 	var ctx = canvas.getContext('2d');
 
-	var varient = 'Quint', type = 'InOut';
+	var varient = 'Quart', type = 'InOut';
 	var Approx = BSEasing; // CeaserEasing KKEasing BSEasing
+	var params;
 
 	var tweenType = Tween[Names[varient] + type];
 	params = Approx[varient + type];
-	
-	// var params = CeaserEasing.QuadIn; // KKEasing
 
+	change();
+	
+	// Manual override if needed
+	// var params = CeaserEasing.QuadIn;
 	// params = [ 0.36, 0, 0.68, 0.04 ];
 
-	// params = [0.5, 0, 0.9, 0.8];
-	// params = [0.2, 0, 0.55, 0.1];
-	// params = [ 0.45, 0, 0.8, 0.6 ]; // abs 40
-	// params = [ 0.425, 0, 0.775, 0.55 ] // sq 40
-
-
-	// params = [  0.12, 0.2, 0.44, 0.96 ]; // abs
-	// params = [ 0.2, 0.36, 0.48, 0.96 ]; // sq 
-	// params = [ 0.5, 0.9, 0.6, 0.9 ]
-	// params = [ 0.25, 0.45, 0.5, 0.95 ]
-	 // params = [ 0.2, 0.36, 0.48, 0.96 ]
-	// params = [ 0.5, 1, 0.86, 0.98 ];
-	
-
-	// var str = '';
-	// var size = 1000;
-	// for (var i = 0; i <= size; i++) {
-	// 	var k = i / size;
-	// 	var val = tweenType(k);
-	// 	str += 'new Point2(' + k * 100 + ', ' + val * 100 + '), ';
-	// }
-
-	// console.log(str);
-
-
-	var params;
+	/*
+	// Use this block to generate points for fit_curve.js
+	var str = '';
+	var size = 1000;
+	for (var i = 0; i <= size; i++) {
+		var k = i / size;
+		var val = tweenType(k);
+		str += 'new Point2(' + k * 100 + ', ' + val * 100 + '), ';
+	}
+	console.log(str);
+	*/
 
 	function draw() {
 		ctx.save();
@@ -61,6 +86,7 @@
 		ctx.scale(1, -1);
 		ctx.translate(250, 250);
 
+		ctx.strokeStyle = 'grey';
 		ctx.beginPath();
 		ctx.moveTo(0, 0);
 		ctx.lineTo(w2, 0);
@@ -78,10 +104,11 @@
 		ctx.stroke();
 
 
+		ctx.globalAlpha = 0.8;
 
 
-		ctx.lineWidth = 2;
-		ctx.strokeStyle = 'blue';
+		ctx.lineWidth = 4;
+		ctx.strokeStyle = 'red';
 		ctx.beginPath();
 		ctx.moveTo(0, 0);
 		
@@ -93,19 +120,11 @@
 		}
 		ctx.stroke();
 
-		ctx.globalAlpha = 0.5;
 	
-
-		// ctx.strokeStyle = 'blue';
-		ctx.beginPath();
-		ctx.arc(params[0] * w2, params[1] * h2, 10, 0, Math.PI * 2);
-		ctx.fill();
-
-		ctx.beginPath();
-		ctx.arc(params[2] * w2, params[3] * h2, 10, 0, Math.PI * 2);
-		ctx.fill();
-		ctx.stroke();
-
+		ctx.strokeStyle = 'blue';
+		ctx.fillStyle = 'pink';
+		ctx.lineWidth = 1;
+		// control handles
 		ctx.beginPath();
 		ctx.moveTo(0, 0);
 		ctx.lineTo(params[0] * w2, params[1] * h2);
@@ -116,36 +135,44 @@
 		ctx.lineTo(params[2] * w2, params[3] * h2);
 		ctx.stroke();
 
+		// control grips
+		ctx.beginPath();
+		ctx.arc(params[0] * w2, params[1] * h2, 10, 0, Math.PI * 2);
+		ctx.fill();
+
+		ctx.beginPath();
+		ctx.arc(params[2] * w2, params[3] * h2, 10, 0, Math.PI * 2);
+		ctx.fill();
 
 		
-		ctx.strokeStyle = 'red';
+		ctx.lineWidth = 4;
 		ctx.beginPath();
 		ctx.moveTo(0, 0);
-		// ctx.bezierCurveTo(params[0] * w2, params[1] * h2, params[2] * w2, params[3] * h2, w2, h2);
-
 		ctx.bezierCurveTo(params[0] * w2, params[1] * h2, params[2] * w2, params[3] * h2, w2, h2);
 		ctx.stroke();
 
-		ctx.lineWidth = 2;
-		ctx.strokeStyle = 'green';
-		ctx.beginPath();
-		ctx.moveTo(0, 0);
 		
-		for (var x = 0; x <= w2; x++) {
-			var x2 = x / w2;
+		// Manual drawing of bezier 
+		// ctx.strokeStyle = 'green';
+		// ctx.beginPath();
+		// ctx.moveTo(0, 0);
+		
+		// for (var x = 0; x <= w2; x++) {
+		// 	var x2 = x / w2;
 
-			var rx = cubicBezier(x2, 0, params[0], params[2], 1);
-			var ry = cubicBezier(x2, 0, params[1], params[3], 1);
+		// 	var rx = cubicBezier(x2, 0, params[0], params[2], 1);
+		// 	var ry = cubicBezier(x2, 0, params[1], params[3], 1);
 			
-			ctx.lineTo(rx * w2, ry * h2);
-		}
+		// 	ctx.lineTo(rx * w2, ry * h2);
+		// }
 		// ctx.stroke();
 
 
+		ctx.lineWidth = 1;
 		var k = Date.now() / 1000 % 8;
 		k /= 8;
 
-		var val = Tween[Names[varient] + type](k);
+		var val = tweenType(k);
 
 		ctx.fillStyle = 'purple';
 		ctx.beginPath();
