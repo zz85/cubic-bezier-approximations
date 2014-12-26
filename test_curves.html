@@ -16,7 +16,23 @@
 
 	var ctx = canvas.getContext('2d');
 
+
+	var Name = {
+		Linear: 'Linear',
+		Quad: 'Quadratic',
+		Cubic: 'Cubic',
+		Quart: 'Quartic',
+		Quint: 'Quintic',
+		Sine: 'Sinusoidal',
+		Expo: 'Exponential',
+		Circ: 'Circular',
+	};
+
+	var varient = 'Expo', type = 'Out';
+	var Approx = CeaserEasing; // CeaserEasing KKEasing
+
 	function draw() {
+		ctx.save();
 		ctx.clearRect(0, 0, w, h);
 
 		ctx.translate(0, h);
@@ -33,29 +49,66 @@
 		ctx.lineTo(0, h2);
 		ctx.stroke();
 
-		
+		ctx.strokeStyle = 'rgba(50, 50, 50, 0.5)';
+		ctx.beginPath();
+		ctx.moveTo(0, 0);
+		ctx.lineTo(w2, h2);
+		ctx.stroke();
+
+
+
 
 		ctx.lineWidth = 2;
-		// ctx.strokeStyle = 'blue';
-		// ctx.beginPath();
-		// ctx.moveTo(0, 0);
+		ctx.strokeStyle = 'blue';
+		ctx.beginPath();
+		ctx.moveTo(0, 0);
 		
-		// for (var x = 0; x <= w2; x++) {
-		// 	var t = x / w2;
-		// 	var k = Tween.QuadraticIn(t);
-		// 	ctx.lineTo(x, k * h2);
-		// }
-		// ctx.stroke();
+		for (var x = 0; x <= w2; x++) {
+			var t = x / w2;
+			// var k = Tween.CircularIn(t); // Circular
+			var k = Tween[Name[varient] + type](t);
+			ctx.lineTo(x, k * h2);
+		}
+		ctx.stroke();
 
 		ctx.globalAlpha = 0.5;
+		
+		var params = Approx[varient + type];
+		// params = [
+		// 	1 - params[1], 1 - params[0],
+		// 	1 - params[3], 1 - params[2],
+		// ];
+
+		// var params = CeaserEasing.QuadIn; KKEasing
+		// params = [0.42, 0, 1.0, 1.0];
+
+		// ctx.strokeStyle = 'blue';
+		ctx.beginPath();
+		ctx.arc(params[0] * w2, params[1] * h2, 10, 0, Math.PI * 2);
+		ctx.fill();
+
+		ctx.beginPath();
+		ctx.arc(params[2] * w2, params[3] * h2, 10, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.stroke();
+
+		ctx.beginPath();
+		ctx.moveTo(0, 0);
+		ctx.lineTo(params[0] * w2, params[1] * h2);
+		ctx.stroke();
+
+		ctx.beginPath();
+		ctx.moveTo(w2, h2);
+		ctx.lineTo(params[2] * w2, params[3] * h2);
+		ctx.stroke();
+
+
+		
 		ctx.strokeStyle = 'red';
 		ctx.beginPath();
 		ctx.moveTo(0, 0);
+		// ctx.bezierCurveTo(params[0] * w2, params[1] * h2, params[2] * w2, params[3] * h2, w2, h2);
 
-		var params = KKEasing.QuadIn;
-		// var params = CeaserEasing.QuadIn;
-		// params = [0.42, 0, 1.0, 1.0];
-		
 		ctx.bezierCurveTo(params[0] * w2, params[1] * h2, params[2] * w2, params[3] * h2, w2, h2);
 		ctx.stroke();
 
@@ -71,9 +124,29 @@
 			var ry = cubicBezier(x2, 0, params[1], params[3], 1);
 			
 			ctx.lineTo(rx * w2, ry * h2);
-			// console.log(rx, ry);
 		}
-		ctx.stroke();
+		// ctx.stroke();
+
+
+		var k = Date.now() / 1000 % 2;
+
+		var val = Tween[Name[varient] + type](k);
+
+		ctx.fillStyle = 'purple';
+		ctx.beginPath();
+		ctx.arc(val * w2, -15, 10, 0, Math.PI * 2);
+		ctx.fill();
+
+
+
+		rx = cubicBezier(k, 0, params[0], params[2], 1);
+
+		ctx.fillStyle = 'orange';
+		ctx.beginPath();
+		ctx.arc(rx * w2, -25, 10, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.restore();
+
 
 
 
@@ -91,7 +164,16 @@
 	}
 
 
-	draw();
+
+	function animate() {
+		requestAnimationFrame(animate);
+
+		draw();
+
+	}
+
+	animate();
+
 
 	// KKEasing CeaserEasing
 	// QuadraticIn -> 
