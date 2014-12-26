@@ -16,33 +16,15 @@
 
 	var ctx = canvas.getContext('2d');
 
-	var Name = {
-		Linear: 'Linear',
-		Quad: 'Quadratic',
-		Cubic: 'Cubic',
-		Quart: 'Quartic',
-		Quint: 'Quintic',
-		Sine: 'Sinusoidal',
-		Expo: 'Exponential',
-		Circ: 'Circular',
-	};
+	var varient = 'Quint', type = 'InOut';
+	var Approx = BSEasing; // CeaserEasing KKEasing BSEasing
 
-	var varient = 'Quad', type = 'Out';
-	var Approx = KKEasing; // CeaserEasing KKEasing
-
-	var tweenType = Tween[Name[varient] + type];
+	var tweenType = Tween[Names[varient] + type];
 	params = Approx[varient + type];
 	
+	// var params = CeaserEasing.QuadIn; // KKEasing
 
-	// var params = CeaserEasing.QuadIn; KKEasing
-	// params = [0.42, 0, 1.0, 1.0];
-
-	// params = [0.49309131506246917,0.0004930913150624692, 0.814690597395756,0.6295665041941216]
-	// params = [1.9723652602498767 / 4,0.001972365260249877/4, 3.258762389583024/4,2.5182660167764865/4];
-	// params = [.6014253713532428,0.0000006014253713532427, .8256639725415448,.4775147513709794]
-	// params = [0.6014253713532444,6.014253713532444e-7, 0.825663972541543,0.47751475137097754];
-	// params = [0.6014253713532444,6.014253713532444e-7, 0.825663972541543,0.47751475137097754];
-	// parmas  = [60.142537135323884/ 100,0.00006014253713532389/100, 82.56639725415505/100,47.75147513709777/100];
+	// params = [ 0.36, 0, 0.68, 0.04 ];
 
 	// params = [0.5, 0, 0.9, 0.8];
 	// params = [0.2, 0, 0.55, 0.1];
@@ -51,7 +33,7 @@
 
 
 	// params = [  0.12, 0.2, 0.44, 0.96 ]; // abs
-	params = [ 0.2, 0.36, 0.48, 0.96 ]; // sq 
+	// params = [ 0.2, 0.36, 0.48, 0.96 ]; // sq 
 	// params = [ 0.5, 0.9, 0.6, 0.9 ]
 	// params = [ 0.25, 0.45, 0.5, 0.95 ]
 	 // params = [ 0.2, 0.36, 0.48, 0.96 ]
@@ -160,12 +142,10 @@
 		// ctx.stroke();
 
 
-		var k = Date.now() / 1000 % 2;
-		k /= 2;
+		var k = Date.now() / 1000 % 8;
+		k /= 8;
 
-
-
-		var val = Tween[Name[varient] + type](k);
+		var val = Tween[Names[varient] + type](k);
 
 		ctx.fillStyle = 'purple';
 		ctx.beginPath();
@@ -301,12 +281,6 @@
 	}
 
 	animate();
-
-
-	// KKEasing CeaserEasing
-	// QuadraticIn -> 
-
-
 
 
 	</script>
