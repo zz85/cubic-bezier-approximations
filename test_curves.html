@@ -16,7 +16,6 @@
 
 	var ctx = canvas.getContext('2d');
 
-
 	var Name = {
 		Linear: 'Linear',
 		Quad: 'Quadratic',
@@ -28,8 +27,49 @@
 		Circ: 'Circular',
 	};
 
-	var varient = 'Quad', type = 'In';
+	var varient = 'Quad', type = 'Out';
 	var Approx = KKEasing; // CeaserEasing KKEasing
+
+	var tweenType = Tween[Name[varient] + type];
+	params = Approx[varient + type];
+	
+
+	// var params = CeaserEasing.QuadIn; KKEasing
+	// params = [0.42, 0, 1.0, 1.0];
+
+	// params = [0.49309131506246917,0.0004930913150624692, 0.814690597395756,0.6295665041941216]
+	// params = [1.9723652602498767 / 4,0.001972365260249877/4, 3.258762389583024/4,2.5182660167764865/4];
+	// params = [.6014253713532428,0.0000006014253713532427, .8256639725415448,.4775147513709794]
+	// params = [0.6014253713532444,6.014253713532444e-7, 0.825663972541543,0.47751475137097754];
+	// params = [0.6014253713532444,6.014253713532444e-7, 0.825663972541543,0.47751475137097754];
+	// parmas  = [60.142537135323884/ 100,0.00006014253713532389/100, 82.56639725415505/100,47.75147513709777/100];
+
+	// params = [0.5, 0, 0.9, 0.8];
+	// params = [0.2, 0, 0.55, 0.1];
+	// params = [ 0.45, 0, 0.8, 0.6 ]; // abs 40
+	// params = [ 0.425, 0, 0.775, 0.55 ] // sq 40
+
+
+	// params = [  0.12, 0.2, 0.44, 0.96 ]; // abs
+	params = [ 0.2, 0.36, 0.48, 0.96 ]; // sq 
+	// params = [ 0.5, 0.9, 0.6, 0.9 ]
+	// params = [ 0.25, 0.45, 0.5, 0.95 ]
+	 // params = [ 0.2, 0.36, 0.48, 0.96 ]
+	// params = [ 0.5, 1, 0.86, 0.98 ];
+	
+
+	// var str = '';
+	// var size = 1000;
+	// for (var i = 0; i <= size; i++) {
+	// 	var k = i / size;
+	// 	var val = tweenType(k);
+	// 	str += 'new Point2(' + k * 100 + ', ' + val * 100 + '), ';
+	// }
+
+	// console.log(str);
+
+
+	var params;
 
 	function draw() {
 		ctx.save();
@@ -66,21 +106,13 @@
 		for (var x = 0; x <= w2; x++) {
 			var t = x / w2;
 			// var k = Tween.CircularIn(t); // Circular
-			var k = Tween[Name[varient] + type](t);
+			var k = tweenType(t);
 			ctx.lineTo(x, k * h2);
 		}
 		ctx.stroke();
 
 		ctx.globalAlpha = 0.5;
-		
-		var params = Approx[varient + type];
-		// params = [
-		// 	1 - params[1], 1 - params[0],
-		// 	1 - params[3], 1 - params[2],
-		// ];
-
-		// var params = CeaserEasing.QuadIn; KKEasing
-		// params = [0.42, 0, 1.0, 1.0];
+	
 
 		// ctx.strokeStyle = 'blue';
 		ctx.beginPath();
@@ -126,10 +158,6 @@
 			ctx.lineTo(rx * w2, ry * h2);
 		}
 		// ctx.stroke();
-
-
-		
-
 
 
 		var k = Date.now() / 1000 % 2;
@@ -203,78 +231,66 @@
 	}
 
 
-	// http://codepen.io/onedayitwillmake/pen/EHDmw
-	/**
-	* Solver for cubic bezier curve with implicit control points at (0,0) and (1.0, 1.0)
-	*/
-	function UnitBezier(p1x, p1y, p2x, p2y) {
-		// pre-calculate the polynomial coefficients
-		// First and last control points are implied to be (0,0) and (1.0, 1.0)
-		this.cx = 3.0 * p1x;
-		this.bx = 3.0 * (p2x - p1x) - this.cx;
-		this.ax = 1.0 - this.cx -this.bx;
+	var tx, ty, to = -1, startx, starty;
+	canvas.addEventListener('mousedown', function(e) {
 
-		this.cy = 3.0 * p1y;
-		this.by = 3.0 * (p2y - p1y) - this.cy;
-		this.ay = 1.0 - this.cy - this.by;
-	}
+		var bounds = canvas.getBoundingClientRect();
 
-	UnitBezier.prototype.epsilon = 1e-6; // Precision  
-	UnitBezier.prototype.sampleCurveX = function(t) {
-		return ((this.ax * t + this.bx) * t + this.cx) * t;
-	}
-	UnitBezier.prototype.sampleCurveY = function (t) {
-		return ((this.ay * t + this.by) * t + this.cy) * t;
-	}
-	UnitBezier.prototype.sampleCurveDerivativeX = function (t) {
-		return (3.0 * this.ax * t + 2.0 * this.bx) * t + this.cx;
-	}
+		var x = e.clientX - bounds.left;
+		var y = e.clientY - bounds.top;
 
-	UnitBezier.prototype.solveCurveX = function (x, epsilon) {
-		var t0; 
-		var t1;
-		var t2;
-		var x2;
-		var d2;
-		var i;
+		x -= 250;
+		y = h - y - 250;
 
-		// First try a few iterations of Newton's method -- normally very fast.
-		for (t2 = x, i = 0; i < 8; i++) {
-			x2 = this.sampleCurveX(t2) - x;
-			if (Math.abs (x2) < epsilon)
-				return t2;
-			d2 = this.sampleCurveDerivativeX(t2);
-			if (Math.abs(d2) < epsilon)
-				break;
-			t2 = t2 - x2 / d2;
+		var sx = x - params[0] * w2;
+		var sy = y - params[1] * h2;
+
+		if (sx * sx + sy * sy < 10 * 10) {
+			tx = params[0] * w2;
+			ty = params[1] * h2;
+			to = 0;
+			console.log('ho');
 		}
 
-		// No solution found - use bi-section
-		t0 = 0.0;
-		t1 = 1.0;
-		t2 = x;
 
-		if (t2 < t0) return t0;
-		if (t2 > t1) return t1;
+		sx = x - params[2] * w2;
+		sy = y - params[3] * h2;
 
-		while (t0 < t1) {
-			x2 = this.sampleCurveX(t2);
-			if (Math.abs(x2 - x) < epsilon)
-				return t2;
-			if (x > x2) t0 = t2;
-			else t1 = t2;
-
-			t2 = (t1 - t0) * .5 + t0;
+		if (sx * sx + sy * sy < 10 * 10) {
+			tx = params[2] * w2;
+			ty = params[3] * h2;
+			to = 2;
+			console.log('gun');
 		}
 
-		// Give up
-		return t2;
+
+		startx = e.clientX;
+		starty = e.clientY;
+
+	})
+
+	document.addEventListener('mousemove', move);
+
+	function move(e) {
+		var bounds = canvas.getBoundingClientRect();
+
+		var x = e.clientX - bounds.left;
+		var y = e.clientY - bounds.top;
+
+		x -= 250;
+		y = h - y - 250;
+
+		if (to>-1) {
+			params[to] = x / w2;
+			params[to+1] = y / h2;
+		}
+
 	}
 
-	// Find new T as a function of Y along curve X
-	UnitBezier.prototype.solve = function (x, epsilon) {
-		return this.sampleCurveY( this.solveCurveX(x, epsilon) );
-	}
+
+	canvas.addEventListener('mouseup', function(e) {
+		to = -1;
+	})
 
 
 	function animate() {
