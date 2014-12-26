@@ -49,6 +49,7 @@ Type.prototype.compare = function(data, x1, y1, x2, y2) {
 	for(i = 0; i < units; i++) {
 		diff = values[i] - data[i];
 		squaredSum += diff * diff;
+		// squaredSum += Math.abs(diff);
 	}
 
 	if (squaredSum < this.leastSquares) {
@@ -59,6 +60,7 @@ Type.prototype.compare = function(data, x1, y1, x2, y2) {
 
 var solved = new Array(units);
 
+/*
 // Unclipped version
 for (x1=0; x1<units; x1++) {
 	for (y1=-units; y1<=units * 2; y1++) {
@@ -69,8 +71,9 @@ for (x1=0; x1<units; x1++) {
 		}
 	}
 }
+/**/
 
-/*
+/**/
 // Clipped version (values between 0..1)
 for (x1=0; x1<units; x1++) {
 	for (y1=0; y1<=units; y1++) {
@@ -81,7 +84,7 @@ for (x1=0; x1<units; x1++) {
 		}
 	}
 }
-*/
+
 
 
 function compare(x1, y1, x2, y2) {

@@ -25,6 +25,7 @@
 	select2.add(new Option('BSEasing'));
 	select2.add(new Option('CeaserEasing'));
 	select2.add(new Option('KKEasing'));
+	select2.add(new Option('BSUnclippedEasing'));
 
 
 	function addOption(type, n) {
@@ -48,6 +49,21 @@
 		var v = select.value.split('|');
 		tweenType = Tween[v[1]];
 		params = Approx[v[0]];
+
+		checkErrors();
+	}
+
+	function checkErrors() {
+		errors = 0;
+		var units = 100;
+		var epsilon = 1e-5;
+		for (var i = 0; i < units; i++) {
+			var k = i / units;
+			var bezier = new UnitBezier(params[0], params[1], params[2], params[3]);
+
+			var diff = bezier.solve(k, epsilon) - tweenType(k);
+			errors += diff * diff;
+		}
 	}
 
 
@@ -56,6 +72,8 @@
 	var varient = 'Quart', type = 'InOut';
 	var Approx = BSEasing; // CeaserEasing KKEasing BSEasing
 	var params;
+	var LOOP = 4;
+	var errors = 0;
 
 	var tweenType = Tween[Names[varient] + type];
 	params = Approx[varient + type];
@@ -169,21 +187,24 @@
 
 
 		ctx.lineWidth = 1;
-		var k = Date.now() / 1000 % 8;
-		k /= 8;
+
+		var k = Date.now() / 1000 % LOOP;
+		k /= LOOP;
 
 		var val = tweenType(k);
 
-		ctx.fillStyle = 'purple';
+		ctx.fillStyle = 'red';
 		ctx.beginPath();
 		ctx.arc(-15, val * h2,10, 0, Math.PI * 2);
 		ctx.fill();
 
+		ctx.strokeStyle = 'grey';
 		ctx.beginPath();
 		ctx.moveTo(k * w2, 0);
 		ctx.lineTo(k * w2, val * h2);
 		ctx.stroke();
 
+		ctx.strokeStyle = 'red';
 		ctx.beginPath();
 		ctx.moveTo(0, val * h2);
 		ctx.lineTo(k * w2, val * h2);
@@ -198,21 +219,23 @@
 
 		var duration = 20000;
 		var epsilon = (1000 / 60 / duration) / 4;
+		var epsilon = 1e-5;
 
 		var bezier = new UnitBezier(params[0], params[1], params[2], params[3]);
 
 		var r2 = bezier.solve(k, epsilon);
-		ctx.fillStyle = 'orange';
+		ctx.fillStyle = 'blue';
 		ctx.beginPath();
 		ctx.arc(-35, r2 * h2, 10, 0, Math.PI * 2);
 		ctx.fill();
 
-
+		// moving lines
 		// ctx.beginPath();
 		// ctx.moveTo(k * w2, 0);
 		// ctx.lineTo(k * w2, r2 * h2);
 		// ctx.stroke();
 
+		ctx.strokeStyle = 'blue';
 		ctx.beginPath();
 		ctx.moveTo(0, r2 * h2);
 		ctx.lineTo(k * w2, r2 * h2);
@@ -221,6 +244,23 @@
 
 		ctx.restore();
 
+		ctx.font = '14px sans-serif';
+		ctx.fillText('value', 250, 250);
+		ctx.fillText('time', 750, 750);
+
+		ctx.font = '20px sans-serif';
+
+		ctx.fillText('Cubic bezier: (' + params[0] + ',' 
+			+ params[1] + ') (' + 
+			+ params[2] + ',' + 
+			+ params[3] + ')', 250, 150);
+
+
+		ctx.font = '9px sans-serif';
+		ctx.fillText('Red is Robert Penner\'s tweens, blue is cubic bezier approximations. Drag pink handles to adjust.', 250, 100);
+
+		ctx.font = '9px sans-serif';
+		ctx.fillText('Error: ' + errors, 250, 120);
 
 
 
@@ -256,7 +296,6 @@
 			tx = params[0] * w2;
 			ty = params[1] * h2;
 			to = 0;
-			console.log('ho');
 		}
 
 
@@ -267,14 +306,12 @@
 			tx = params[2] * w2;
 			ty = params[3] * h2;
 			to = 2;
-			console.log('gun');
 		}
-
 
 		startx = e.clientX;
 		starty = e.clientY;
 
-	})
+	});
 
 	document.addEventListener('mousemove', move);
 
@@ -290,6 +327,8 @@
 		if (to>-1) {
 			params[to] = x / w2;
 			params[to+1] = y / h2;
+
+			checkErrors();
 		}
 
 	}
