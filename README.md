@@ -1,6 +1,5 @@
 "Better" / Bruteforce Cubic Bezier Approximations for Robert Penner Easing Equations
 
-
 ```sh
 node compare_curve.js
 ```
